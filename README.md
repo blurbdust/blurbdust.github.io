@@ -6,6 +6,9 @@
 * IPv6 tunnel in Chicago
 * AWS Certification (All three levels)
 
+[August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
+[August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
 # August 5th, 2017
 ## Morning Coffee at noon
 I still have a ways to go to get this all updated. I need to still go over my plans for distributed computing utilizing all the servers I currently own and can set up (Free AWS instances!) as well as the build log for my NAS. I have the server as well as the drives but I haven't put them in it yet since I was keeping that server as a Tensorflow node for now. I really am not too sure how I want to set it up either. I would like a shell and the ability to run some code on it and I'm not sure if FreeNAS or unRAID supports that. That being said, the hardware I will use is the following.
