@@ -4,6 +4,7 @@
 * OpenCV Image Recognition on top of Tensorflow
 * Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)
 * IPv6 tunnel in Chicago
+* AWS Certification (All three levels)
 
 # August 4th, 2017
 ## Merry Christmas everyone. 
