@@ -9,6 +9,6 @@ I'm a student in Computer Engineering at Iowa State University. If you're not on
 * SDR (Software Defined Radio)
 * Linux Sysadmin and security
 * CTFs (Capture the Flag (on a computer not outside))
-* [https://twitter.com/argonne/status/840383280079855616]: Random challenges on the internet
+* [Random challenges on the internet]: https://twitter.com/argonne/status/840383280079855616
 
 Once I figure out how I want to structure this page I'll update this again. See you within 6 hours?
