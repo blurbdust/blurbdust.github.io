@@ -14,12 +14,13 @@
 ## Morning Coffee at noon
 I still have a ways to go to get this all updated. I need to still go over my plans for distributed computing utilizing all the servers I currently own and can set up (Free AWS instances!) as well as the build log for my NAS. I have the server as well as the drives but I haven't put them in it yet since I was keeping that server as a Tensorflow node for now. I really am not too sure how I want to set it up either. I would like a shell and the ability to run some code on it and I'm not sure if FreeNAS or unRAID supports that. That being said, the hardware I will use is the following.
 
-| Part | Name | Cost |
+| Part | Name | Cost ||
 |------|------|------|
 | CPU  | i3-4150 | \* |
 | RAM  | 8GB PC3-128000 ECC | \* |
 | Hard Drives | 4x 8TB WB Red (shucked) | $640 |
-| GPU  | GTX 750 (Just got a GTX 1050Ti) | $30 |
+| GPU  | GTX 750 (Just got a GTX 1050Ti) | $30 ||
+
 \* This came as one [system](https://www.newegg.com/Product/Product.aspx?Item=2RC-001A-000S2) for $200.
 
 I'm slowly working towards my own homelab. I'd like to be able to spin up a VM whenever from wherever and have the install automated and post install mostly automated. A friend showed me [checkinstall](https://wiki.debian.org/CheckInstall) where I could easily host the package somewhere and use that to facilitate postinstall stuff. I've been paying for VPSs for awhile now and I'd like to free up some of my monthly expenses so hosting my own hardware would be a good way to do that. The only issue is the network though. The same friend has essentially datacenter grade networking capabilities. I won't go into detail about his setup because that's how vulnerabilities can be found. 
