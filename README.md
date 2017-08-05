@@ -1,6 +1,6 @@
 # Todo List
 * Research [OpenBTS](http://openbts.org) for use with PlutoSDR
-* Research [OpenLTE](https://openlte.sourceforge.net) for use with PlutoSDR
+* Research [OpenLTE](http://openlte.sourceforge.net/) for use with PlutoSDR
 * OpenCV Image Recognition on top of Tensorflow
 * Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)
 * IPv6 tunnel in Chicago
