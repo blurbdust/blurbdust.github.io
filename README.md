@@ -14,12 +14,12 @@
 ## Morning Coffee at noon
 I still have a ways to go to get this all updated. I need to still go over my plans for distributed computing utilizing all the servers I currently own and can set up (Free AWS instances!) as well as the build log for my NAS. I have the server as well as the drives but I haven't put them in it yet since I was keeping that server as a Tensorflow node for now. I really am not too sure how I want to set it up either. I would like a shell and the ability to run some code on it and I'm not sure if FreeNAS or unRAID supports that. That being said, the hardware I will use is the following.
 
-| Part | Name | Cost ||
+| Part | Name | Cost |
 |------|------|------|
 | CPU  | i3-4150 | \* |
 | RAM  | 8GB PC3-128000 ECC | \* |
 | Hard Drives | 4x 8TB WB Red (shucked) | $640 |
-| GPU  | GTX 750 (Just got a GTX 1050Ti) | $30 ||
+| GPU  | GTX 750 (Just got a GTX 1050Ti) | $30 |
 
 \* This came as one [system](https://www.newegg.com/Product/Product.aspx?Item=2RC-001A-000S2) for $200.
 
