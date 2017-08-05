@@ -7,6 +7,7 @@
 * AWS Certification (All three levels)
 
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
+
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
 
 # August 5th, 2017
