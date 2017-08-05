@@ -57,7 +57,7 @@ The way it is laid out made sense however eventually failed. When installed I co
 
 The error was "ImportError: cannot import name iio".
 
-/usr/local/lib/python2.7/dist-packages/gnuradio/iio did exist and as far as I am aware that is how one would import something from inside a folder. Maybe gnuradio.iio would have worked? I'll test in a bit.
+/usr/local/lib/python2.7/dist-packages/gnuradio/iio did exist and as far as I am aware that is how one would import something from inside a folder. Maybe gnuradio.iio would have worked? ~~I'll test in a bit.~~ Tested, no go.
 
 ```
 cd /usr/local/lib/python2.7/dist-packages/
