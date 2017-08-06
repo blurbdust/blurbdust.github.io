@@ -3,12 +3,34 @@
 * Research [OpenLTE](http://openlte.sourceforge.net/) for use with PlutoSDR
 * OpenCV Image Recognition on top of Tensorflow
 * Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)
-* IPv6 tunnel in Chicago
+* ~~IPv6 tunnel in Chicago~~
+* OpenVPN setup on VPS
 * AWS Certification (All three levels)
+
+[August 6th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-6th-2017)
 
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# August 6th, 2017
+## Brunch
+I met up with some friends for brunch before they all move away (myself included) in the next few weeks. After drinking a solid 3 cups of coffee and eating my weight in hashbrowns, I'm ready to set up an IPv6 tunnel. I found a [nice guide from linode](https://www.linode.com/docs/networking/set-up-an-ipv6-tunnel-on-your-linode) and wrote up a script to make sure I don't get kicked off midsession and lose access to my VPS. ifdown will stop all traffic on my NIC so it'd be bad to run it in an interactive session. I signed up for the service [here](https://tunnelbroker.net/) and got to work. Below is ipv6tunnel.sh
+```
+IP_HE="*Server IPv4 Address*"
+IP_LOCAL="*Client IPv4 Address*"
+IP_HE_SIX="*Client IPv6 Adress*"
+
+ip tunnel add he-ipv6 mode sit remote $IP_HE local $IP_LOCAL ttl 255
+ip link set he-ipv6 up
+ip addr add $IP_HE_SIX dev he-ipv6
+ifdown eth0
+ip route add ::/0 dev he-ipv6
+ifup eth0
+ip -f inet6 addr
+```
+
+Of course, replace the part is asterisks from your tunnel details page and then you should be good. You can test it via `ping6 ipv6.google.com` or `ping -6 ipv6.google.com`. Next step? Setup [OpenVPN](https://openvpn.net/) so I can VPN into my endpoint of the IPv6 tunnel and then automagically run stuff from there. 
 
 # August 5th, 2017
 ## Morning Coffee at noon
