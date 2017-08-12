@@ -4,14 +4,22 @@
 * OpenCV Image Recognition on top of Tensorflow
 * Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)
 * ~~IPv6 tunnel in Chicago~~
-* OpenVPN setup on VPS
+* OpenVPN setup on VPS (Maybe not. It's a lot of work.)
 * AWS Certification (All three levels)
+
+[August 11th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-11th-2017)
 
 [August 6th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-6th-2017)
 
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# August 11th, 2017
+## Moving Day - 1
+Today I learned about [statuscake](https://www.statuscake.com/) and immediately set up an account. 
+Look, all green! ![greeeeeen](http://i.imgur.com/csNbzSm.png)
+Now I'll get emails if things go down! This is my non-school mode so I'll have to add three or so more domains. I also got iDRAC setup on one of my colocated servers so that's cool! I also handed off another one to get colocated but I ran out of time in the summer to help with it. 
 
 # August 6th, 2017
 ## Brunch
