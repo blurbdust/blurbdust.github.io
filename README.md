@@ -7,9 +7,9 @@
 * OpenVPN setup on VPS (Maybe not. It's a lot of work.)
 * AWS Certification (All three levels)
 
-[August 13th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-13th-2017)
+[August 14th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-13th-2017)
 
-[August 12th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-12th-2017)
+[August 13th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-12th-2017)
 
 [August 11th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-11th-2017)
 
@@ -19,7 +19,7 @@
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
 
-# August 11th, 2017
+# August 14th, 2017
 ## Syzkaller Returns
 Right after waking up, I check syzkaller to see what it found. It managed to find a use-after-free in free_ldt_struct. Going off of this [guide](http://vegardno.blogspot.de/2016/08/sync-debug.html) the next step is to debug it. Going through the syzkaller output, the bug is in arch/x86/kernel/ldt.c. Nice now to find the line of code. I pop the filename and "free_ldt_struct" into Google and get [this page.](http://elixir.free-electrons.com/linux/latest/ident/free_ldt_struct) Line 95 is the one we want to look at. I copied the whole function below.
 
@@ -40,7 +40,7 @@ static void free_ldt_struct(struct ldt_struct *ldt)
 Specifically we want 'if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)'. I have no idea where to go from here.
 
 
-# August 11th, 2017
+# August 13th, 2017
 ## Moving Day + 1
 Today I got really bored and Rick and Morty Season 3 Episode 4 doesn't air until 10:30pm so I figured I'd try to setup [syzkaller](https://github.com/google/syzkaller). That was a few hours ago. I am now finally compiling the Linux kernel from source so I'm about halfway done. Fun fact, you need bc installed and I didn't know that since it's not listed in the documentation. That made redo about 20 minutes of work before figuring out I needed to install another program. 
 
