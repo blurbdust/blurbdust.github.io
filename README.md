@@ -7,6 +7,8 @@
 * OpenVPN setup on VPS (Maybe not. It's a lot of work.)
 * AWS Certification (All three levels)
 
+[August 13th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-13th-2017)
+
 [August 12th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-12th-2017)
 
 [August 11th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-11th-2017)
@@ -16,6 +18,27 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# August 11th, 2017
+## Syzkaller Returns
+Right after waking up, I check syzkaller to see what it found. It managed to find a use-after-free in free_ldt_struct. Going off of this [guide](http://vegardno.blogspot.de/2016/08/sync-debug.html) the next step is to debug it. Going through the syzkaller output, the bug is in arch/x86/kernel/ldt.c. Nice now to find the line of code. I pop the filename and "free_ldt_struct" into Google and get [this page.](http://elixir.free-electrons.com/linux/latest/ident/free_ldt_struct) Line 95 is the one we want to look at. I copied the whole function below.
+
+```
+static void free_ldt_struct(struct ldt_struct *ldt)
+{
+	if (likely(!ldt))
+		return;
+
+	paravirt_free_ldt(ldt->entries, ldt->size);
+	if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)
+		vfree_atomic(ldt->entries);
+	else
+		free_page((unsigned long)ldt->entries);
+	kfree(ldt);
+}
+```
+Specifically we want 'if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)'. I have no idea where to go from here.
+
 
 # August 11th, 2017
 ## Moving Day + 1
