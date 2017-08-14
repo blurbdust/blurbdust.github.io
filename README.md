@@ -37,7 +37,7 @@ static void free_ldt_struct(struct ldt_struct *ldt)
 	kfree(ldt);
 }
 ```
-Specifically we want 'if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)'. I have no idea where to go from here.
+Specifically we want `if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)`. I have no idea where to go from here.
 
 
 # August 13th, 2017
