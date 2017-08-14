@@ -27,6 +27,8 @@ It appears to be running. 13747 programs run within 30 seconds.
 
 ![syzcaller_running](http://i.imgur.com/rCYdDBs.png)
 
+![htop_of_syzkaller](http://i.imgur.com/WX065wt.png)
+
 # August 11th, 2017
 ## Moving Day - 1
 Today I learned about [statuscake](https://www.statuscake.com/) and immediately set up an account. 
