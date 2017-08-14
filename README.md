@@ -7,6 +7,8 @@
 * OpenVPN setup on VPS (Maybe not. It's a lot of work.)
 * AWS Certification (All three levels)
 
+[August 12th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-12th-2017)
+
 [August 11th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-11th-2017)
 
 [August 6th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-6th-2017)
@@ -14,6 +16,10 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# August 11th, 2017
+## Moving Day + 1
+Today I got really bored and Rick and Morty Season 3 Episode 4 doesn't air until 10:30pm so I figured I'd try to setup [syzkaller](https://github.com/google/syzkaller). That was a few hours ago. I am now finally compiling the Linux kernel from source so I'm about halfway done. Fun fact, you need bc installed and I didn't know that since it's not listed in the documentation. That made redo about 20 minutes of work before figuring out I needed to install another program. 
 
 # August 11th, 2017
 ## Moving Day - 1
