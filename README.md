@@ -25,6 +25,8 @@ UPDATE: I also had an issue with alsa. Fixed with [this](https://github.com/goog
 
 It appears to be running. 13747 programs run within 30 seconds.
 
+IMPORTANT: If you want to access the webserver and you are using nginx and you are on only IPv6, you must change nginx to listen on [::]:80 and then proxy_pass http://127.0.0.1. This too me too long to figure out.
+
 ![syzcaller_running](http://i.imgur.com/rCYdDBs.png)
 
 ![htop_of_syzkaller](http://i.imgur.com/WX065wt.png)
