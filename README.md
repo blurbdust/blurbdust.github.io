@@ -82,10 +82,10 @@ print("Total Time: " + str(timer() - start))
 Nice, still pretty fast. Now let's hope I got it this time.
 
 ```
-000A-bomb
+A-bomb000
 ...
-999A-bomb
-000A-bombs
+A-bomb999
+A-bombs000
 ```
 
 Awesome! Time to run hashcat then!
@@ -110,7 +110,7 @@ Candidates.#1....: AchaeanA-bomb000 -> AchaeanAnderson919
 HWMon.Dev.#1.....: Temp: 46c Fan: 33% Util: 94% Core:2012MHz Mem:3802MHz Bus:8
 ```
 
-And running! 100 days?! Wow. Uhhh that's horrible. I guess I'll let it run?
+And running! 100 days?! Wow. Uhhh that's horrible. I guess I'll let it run? Maybe I should throw it on my mining rig? 
 
 
 # August 14th, 2017
