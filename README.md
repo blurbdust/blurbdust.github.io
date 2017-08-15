@@ -110,7 +110,71 @@ Candidates.#1....: AchaeanA-bomb000 -> AchaeanAnderson919
 HWMon.Dev.#1.....: Temp: 46c Fan: 33% Util: 94% Core:2012MHz Mem:3802MHz Bus:8
 ```
 
-And running! 100 days?! Wow. Uhhh that's horrible. I guess I'll let it run? Maybe I should throw it on my mining rig? 
+And running! 100 days?! Wow. Uhhh that's horrible. I guess I'll let it run? Maybe I should throw it on my mining rig?
+
+No that's too long, plus it looks like everything should be lowercase with no other symbols.
+
+main.py
+```
+from timeit import default_timer as timer
+
+start = timer()
+
+out_file = "nouns_digits.txt"
+out = open(out_file, "w")
+
+with open("nouns.txt", "r") as noun_list:
+	for line in noun_list:
+		if "-" in line:
+			continue
+		line = line.lower()
+		for i in range(0, 1000):
+			out.write(line.rstrip("\n") + '{0}'.format(str(i).zfill(3)) + "\n")
+
+out.close()
+print("Total Time: " + str(timer() - start))
+```
+
+main2.py
+```
+from timeit import default_timer as timer
+
+start = timer()
+
+out_file = "adjectives_lower.txt"
+out = open(out_file, "w")
+
+with open("adjectives.txt", "r") as adjectives_list:
+	for line in adjectives_list:
+		if "-" in line:
+			continue
+		line = line.lower()
+		out.write(line)
+
+out.close()
+print("Total Time: " + str(timer() - start))
+```
+
+Hashcat output:
+```
+Session..........: hashcat
+Status...........: Running
+Hash.Type........: WPA/WPA2
+Hash.Target......: ..\wordlists\NETGEARXX\NETGEAR17.hccapx
+Time.Started.....: Tue Aug 15 13:27:37 2017 (2 secs)
+Time.Estimated...: Fri Nov 10 08:10:16 2017 (86 days, 19 hours)
+Guess.Base.......: File (..\wordlists\NETGEARXX\nouns_digits.txt), Right Side
+Guess.Mod........: File (..\wordlists\NETGEARXX\adjectives_lower.txt), Left Side
+Speed.Dev.#1.....:   314.3 kH/s (11.21ms)
+Recovered........: 0/2 (0.00%) Digests, 0/1 (0.00%) Salts
+Progress.........: 337920/2357777430000 (0.00%)
+Rejected.........: 0/337920 (0.00%)
+Restore.Point....: 0/88565000 (0.00%)
+Candidates.#1....: aaronicabc000 -> aaronicangela919
+HWMon.Dev.#1.....: Temp: 48c Fan: 33% Util: 94% Core:2012MHz Mem:3802MHz Bus:8
+```
+
+Better. Also faster, nice!
 
 
 # August 14th, 2017
