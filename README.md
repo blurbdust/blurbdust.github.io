@@ -7,9 +7,11 @@
 * OpenVPN setup on VPS (Maybe not. It's a lot of work.)
 * AWS Certification (All three levels)
 
-[August 14th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-13th-2017)
+[August 15th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-15th-2017)
 
-[August 13th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-12th-2017)
+[August 14th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-14th-2017)
+
+[August 13th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-13th-2017)
 
 [August 11th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-11th-2017)
 
@@ -18,6 +20,98 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# August 15th, 2017
+## Hashcat Returns 
+So last night I got bored and I got my WiFi card with monitor mode back so I figured I'd go ahead and try to get into the router that I found in the trash last semester. Now to make it fair, I added a spare phone onto the network using WPS. Then I could use airodump-ng to get the handshake. NETGEAR17 is the SSID so let's check if someone already knows the password format from the factory. Checking [here](https://forum.hashkiller.co.uk/topic-view.aspx?t=2715), yes it's an adjective + noun + 3 digits. Cool.
+
+Let's check around for a wordlist because I'm lazy. Nope none so far. Alright time to build one. I found a zip file for all adjectives and nouns in the English language. Cool. 28K adjectives and 91K nouns. Wow, that's a lot. Let's math out how big this wordlist will be.
+
+28000 * 91000 * 1000 = 2.6 trillion lines. Hmmm, with each character being a byte we're looking at (on average) 5 + 4 + 3 = 12 bytes per line. 2.6 trillion * 12 bytes is 30,576,000,000,000 so ~30TB. No thanks, not for just one list. There's gotta be a way to generate it as we go with hashcat. Yes! There is! It's called a [combination attack](https://hashcat.net/wiki/doku.php?id=combinator_attack). But it only takes a max of two wordlists. That's alright, time to append 000-999 to all the nouns. Why the nouns? (21000 * 91000) > (91000 * 1000). Below is my python script to add the digits.
+
+```
+from timeit import default_timer as timer # timer
+
+start = timer() # get start time
+
+out_file = "nouns_digits.txt" # output filename
+out = open(out_file, "w") # open output file as writable
+
+with open("nouns.txt", "r") as noun_list: # open input file
+	for line in noun_list: # for each line in the file
+		for i in range(0, 999): # set up a loop from 0 - 999
+			out.write(line + '{0}'.format(str(i).zfill(3))) # write the line + formatted to length 3 str of i
+
+out.close() # close
+print("Total Time: " + str(timer() - start)) # Say how long it took
+```
+`Total Time: 130.0922654732531` 
+Nice, that was fast. Let's check it. 
+
+`head -n 1000 noun_digits.txt`
+
+```
+A-bomb
+000A-bomb
+...
+998A-bomb
+000A-bombs
+```
+
+Welp. Looks like I forgot a few things. First, why are the numbers first? I didn't trim the whitespace at the end of the line from the input file. I also need to include 999 so increase the for loop by 1. That's a rookie mistake right there. Since we are trimming the new lines, we should add one in at the end of the line.
+
+```
+from timeit import default_timer as timer
+
+start = timer()
+
+out_file = "nouns_digits.txt"
+out = open(out_file, "w")
+
+with open("nouns.txt", "r") as noun_list:
+	for line in noun_list:
+		for i in range(0, 1000):
+			out.write(line.rstrip("\n") + '{0}'.format(str(i).zfill(3)) + "\n")
+
+out.close()
+print("Total Time: " + str(timer() - start))
+```
+
+`Total Time: 142.4148430030404`
+
+Nice, still pretty fast. Now let's hope I got it this time.
+
+```
+000A-bomb
+...
+999A-bomb
+000A-bombs
+```
+
+Awesome! Time to run hashcat then!
+
+`hashcat64.exe -m 2500 -a 1 ..\wordlists\NETGEARXX\NETGEAR17.hccapx ..\wordlists\NETGEARXX\adjectives.txt ..\wordlists\NETGEARXX\nouns_digits.txt`
+
+```
+Session..........: hashcat
+Status...........: Running
+Hash.Type........: WPA/WPA2
+Hash.Target......: ..\wordlists\NETGEARXX\NETGEAR17.hccapx
+Time.Started.....: Tue Aug 15 13:07:17 2017 (11 secs)
+Time.Estimated...: Fri Nov 24 02:33:59 2017 (100 days, 14 hours)
+Guess.Base.......: File (..\wordlists\NETGEARXX\nouns_digits.txt), Right Side
+Guess.Mod........: File (..\wordlists\NETGEARXX\adjectives.txt), Left Side
+Speed.Dev.#1.....:   298.0 kH/s (11.13ms)
+Recovered........: 0/2 (0.00%) Digests, 0/1 (0.00%) Salts
+Progress.........: 3041280/2590535277000 (0.00%)
+Rejected.........: 0/3041280 (0.00%)
+Restore.Point....: 0/90963000 (0.00%)
+Candidates.#1....: AchaeanA-bomb000 -> AchaeanAnderson919
+HWMon.Dev.#1.....: Temp: 46c Fan: 33% Util: 94% Core:2012MHz Mem:3802MHz Bus:8
+```
+
+And running! 100 days?! Wow. Uhhh that's horrible. I guess I'll let it run?
+
 
 # August 14th, 2017
 ## Syzkaller Returns
