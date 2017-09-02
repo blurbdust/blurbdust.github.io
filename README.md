@@ -1,11 +1,14 @@
 # Todo List
 * Research [OpenBTS](http://openbts.org) for use with PlutoSDR
 * Research [OpenLTE](http://openlte.sourceforge.net/) for use with PlutoSDR
-* OpenCV Image Recognition on top of Tensorflow
-* Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)
+* ~~OpenCV Image Recognition on top of Tensorflow~~
+* ~~Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)~~
 * ~~IPv6 tunnel in Chicago~~
 * OpenVPN setup on VPS (Maybe not. It's a lot of work.)
 * AWS Certification (All three levels)
+
+
+[September 2nd, 2017](https://github.com/blurbdust/blurbdust.github.io#september-2nd-2017)
 
 [August 15th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-15th-2017)
 
@@ -20,6 +23,11 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# September 2nd, 2017
+## Almost noon delight
+Morning everyone, what have I been up to you ask? Good question. School mostly. I did manage to get object recognition and classification working with [OpenCV and Tensorflow](https://twitter.com/Blurbdust/status/900207128283144192) so that's cool. I stopped trying to hack in support for the PlutoSDR into gr-osmosdr beause [csete](http://oz9aec.net/) already [did](https://github.com/csete/gr-osmosdr-gqrx/tree/plutosdr). I saw [this](https://wiki.analog.com/university/tools/pluto/users/customizing) wiki page when I first got the SDR but I thought it only pertained to preproduction hardware so I didn't try it and chance that I would brick the device. Someone else did try and it worked so I tried it and I can confirm it works as well! Now I get 70MHz - 6GHz with 56MHz of bandwidth! That's insane for being $99! Along the lines of updates, I am now running Arch on my laptop and I'm loving it so far. Everything is snappy and super lightweight compared to Windows. I was trying to get away with using a VM and the Linux subsystem but I contasntly wanted Linux running natively so I switched. I also got a license for Binary Ninja and installed the majority of the tools listed [here](https://github.com/zardus/ctf-tools.git) for the various CTFs I participate in. Transistioning to cybersecurity now, a class that I am in requires a research project and a demonstration. My project is arbitary code execution on iOS. I know that is a very distant goal currently. My backup plan, which was already approved, is explaining how an already known vulnerability works as well as writing my own exploit for it. That is a lot less difficult than finding my own bugs and writing and exploit for them. I am very aware how difficult this project will be and I'm charging full steam ahead. I'm already on Chapter 5 of the iOS Hacker's Handbook so things are starting to make sense as to how iOS works (as of iOS 5.1.1). I know there are a ton of new things that I need to learn before getting to modern day iOS such as 64-bit ARM assembly, KPP, and surely a huge list I can't think of before drinking coffee. (Coffee is done now).
+
 
 # August 15th, 2017
 ## Hashcat Returns 
