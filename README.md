@@ -4,9 +4,10 @@
 * ~~OpenCV Image Recognition on top of Tensorflow~~
 * ~~Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)~~
 * ~~IPv6 tunnel in Chicago~~
-* OpenVPN setup on VPS (Maybe not. It's a lot of work.)
+* ~~OpenVPN setup on VPS (Maybe not. It's a lot of work.)~~
 * AWS Certification (All three levels)
 
+[January 11th, 2018](https://github.com/blurbdust/blurbdust.github.io#january-11th-2018)
 
 [September 2nd, 2017](https://github.com/blurbdust/blurbdust.github.io#september-2nd-2017)
 
@@ -23,6 +24,15 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# January 11th, 2018
+## Quick Late Update
+
+So I found a nice script to help setup OpenVPN and by help I mean automate. I haven't tested anything about DNS leakage or anything so I don't use it daily yet. I changed jobs so now I should be doing a lot with ESXi and VSphere now.
+
+An update to iOS research, now I own [Vol I](https://www.amazon.com/MacOS-iOS-Internals-User-Mode/dp/099105556X/ref=as_sl_pc_qf_sp_asin_til?tag=newosxbookcom-20&linkCode=w00&linkId=25d40cd80f346c76537ef5fb1ea1ed81&creativeASIN=099105556X) and [Vol III](https://www.amazon.com/MacOS-iOS-Internals-III-Insecurity/dp/0991055535/ref=as_sl_pc_qf_sp_asin_til?tag=newosxbookcom-20&linkCode=w00&linkId=0b61c945365c9c37cd3cf88f10a5f629&creativeASIN=0991055535) of \*OS Internals. Vol III has been insanely helpful for me to understand a few exploits. I've also read [@siguza](https://twitter.com/s1guza)'s write ups on [cl0ver](https://siguza.github.io/cl0ver/) and [v0rtex](https://siguza.github.io/v0rtex/).
+
+I ran [AFL](http://lcamtuf.coredump.cx/afl/) against VLC's WAV decoder over break for about 43 million executions and the only error was related to ALSA not having a real sound card so good job guys, I'll have to make money through a different bug bounty. I plan on doing a bit more blogging while I play with more iOS stuff. 
 
 # September 2nd, 2017
 ## Almost noon delight
