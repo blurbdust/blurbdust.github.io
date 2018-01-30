@@ -32,6 +32,27 @@
 
 Since the [KRACK scripts](https://github.com/vanhoefm/krackattacks-scripts) went public I've been meaning to play with them. I have a surplus of RPi Zero W's so I figured I'd throw Kali on one but I guess setting one up without a screen is extremely finnicky. I've thrown two hours at it so far following [this guide](https://whitedome.com.au/re4son/re4son-kernel/) (Search for "Ethernet Gadget") to find the exact instructions. Both Arch and macOS saw the ethernet gadget however I was unable to SSH in over USB. I also loosly follewed [these instructions](https://bbs.archlinux.org/viewtopic.php?id=216968) for assigning an ip address to the RPi over USB on Arch but still no luck. I'll try on Windows later tonight? [P4wnPi](https://github.com/mame82/P4wnP1) setup including SSH over USB was also a failure on Arch. I'm assuming it's an Arch issue then... P4wnPi, depending on the config, opens a WiFi network for management purposes so that was handy to initially set it up. 
 
+Alright finally!
+
+On the Pi (`/etc/network/interfaces`):
+```
+allow-hotplug usb0
+iface usb0 inet static
+address 192.168.137.2
+netmask 255.255.255.0
+network 192.168.137.0
+broadcast 192.168.137.255
+gateway 192.168.137.1
+```
+
+On Arch:
+```
+sudo ip addr add 192.168.137.1/24 broadcast 192.168.137.255 dev enp0s20f0u1 
+sudo ip route add default via 192.168.137.1
+```
+
+And `ssh root@192.168.137.2` works! Woooooo! Alright let's play with some KRACK.
+
 
 # January 11th, 2018
 ## Quick Late Update
