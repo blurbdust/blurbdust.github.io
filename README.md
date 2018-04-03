@@ -40,7 +40,7 @@ This is a work in progress and I will continue to make this less confusing and f
 
 This is the beginning of the story of CVE-2018-7740 or how I completed a life goal. 
 
-First and foremost, PoC.
+First and foremost, PoC. Fixed in v4.15.14.
 
 ```
 #define _GNU_SOURCE
@@ -224,6 +224,7 @@ The pgoff and size arguments specify the region of the file that is
 ```
 
 To quote the maintainer in explaining the bug, the issue is: "In the process of converting this to a page offset and putting it in vm_pgoff, and then converting back to bytes to compute mapping length we end up with 0.  We ultimately end up passing (from,to) page offsets into hugetlbfs where from is greater than to. :( This confuses the heck out the the huge page reservation code as the 'negative' range looks like an error and we never complete the reservation process and leave the 'adds_in_progress'. This issue has existed for a long time.  The VM_BUG_ON just happens to catch the situation which was previously not reported or had some other side effect."
+
 
 # February 1st, 2018
 ## Full Kali on RPi Zero W
