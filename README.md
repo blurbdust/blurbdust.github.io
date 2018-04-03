@@ -7,6 +7,10 @@
 * ~~OpenVPN setup on VPS (Maybe not. It's a lot of work.)~~
 * AWS Certification (All three levels)
 
+[April 3rd, 2018](https://github.com/blurbdust/blurbdust.github.io#april-3rd-2018)
+
+[February 1st, 2018](https://github.com/blurbdust/blurbdust.github.io#february-1st-2018)
+
 [January 31st, 2018](https://github.com/blurbdust/blurbdust.github.io#january-31st-2018)
 
 [January 29th, 2018](https://github.com/blurbdust/blurbdust.github.io#january-29th-2018)
@@ -29,10 +33,66 @@
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
 
+# April 3rd, 2018
+## CVE-2018-7740
+
+This is the beginning of the story of CVE-2018-7740 or how I completed a life goal. 
+
+Let's get right into it. I was using [syzkaller](https://github.com/google/syzkaller) for fuzzing the Linux kernel for a few months. I initially got this crash back in August 2017 however I admit I didn't really know what it meant or what I was doing so I ignored it. Fast forward to January 2018 when I got a Del R410 with 12 cores and 6GB of RAM from the local university surplus store for $38. I installed Arch on it and then went through the slightly painful instructions for setting up syzkaller, including downloading and building the Linux kernel from source. 
+
+The first time I got syzkaller setup I threw in every possible option and got overwhelmed by the information so this time around I only added a few required options and left the config for building the kernel to be mostly default. I guess I could upload my config file if there is a request to do so. 
+
+From here I made sure to use KVM virtualization so I don't get any issues related to ALSA again, (see my really old post back in 2017), and now we're up and fuzzing!
+
+Initially I got several crashes related to "Lost Connection to test machine" and/or "no output from test machine". These are generally just catchalls and usually contain sleeps for longer than the set timeout. 
+
+I got a crash of "kernel BUG at mm/hugetlb.c:LINE!" which I initially thought was due to the low amount of RAM in the system since the C repro only referenced `mmap` and `remap_file_pages` so after buying 32GB of RAM off r/homelabsales and installing it, I started up a separate VM in QEMU and compiled and ran the crashing program. And the kernel crashed again! The last line of the crash report was `mm/hugetlb.c:741` so I stared my search there. So I pulled up kernel.org and searched for the file. The exact line I'm looking for is [here](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/mm/hugetlb.c?h=v4.15.7#n741). 
+
+```
+mm/hugetlb.c
+void resv_map_release(struct kref *ref) // Line 727
+{
+	struct resv_map *resv_map = container_of(ref, struct resv_map, refs);
+	struct list_head *head = &resv_map->region_cache;
+	struct file_region *rg, *trg;
+
+	/* Clear out any active regions before we release the map. */
+	region_del(resv_map, 0, LONG_MAX);
+
+	/* ... and any entries left in the cache */
+	list_for_each_entry_safe(rg, trg, head, link) {
+		list_del(&rg->link);
+		kfree(rg);
+	}
+											// Line 741
+	VM_BUG_ON(resv_map->adds_in_progress);
+
+	kfree(resv_map);
+}
+```
+
+So I actually want to look at 741+1 which is `VM_BUG_ON(resv_map->adds_in_progress)` so this is just a catchall that throws the error. Alright back to the calltrace (See [here](https://pastebin.com/1mMQvH0E)). So we want to look at `hugetlbfs_evict_inode+0x74/0xa0` or  `fs/hugetlbfs/inode.c:476` which is [here](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/fs/hugetlbfs/inode.c?h=v4.15.7#n476).
+
+```
+fs/hugetlb/inode.c
+static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
+				   loff_t lend)
+{
+...
+	if (truncate_op)
+		(void)hugetlb_unreserve_pages(inode, start, LONG_MAX, freed); //Line 475
+}
+```
+
+# February 1st, 2018
+## Full Kali on RPi Zero W
+
+I found out I could just run `apt-get install kali-linux-full` and then wait three hours and have all of Kali at my disposal. Cool!
+
 # January 31st, 2018
 ## Setup of RPi's
 
-I'm using [this](https://whitedome.com.au/re4son/download/kali-linux-armel-re4son/) Kali image. I'm dairly certain it's very close to the stock image however this has the Nexmon drivers installed out of the box. 
+I'm using [this](https://whitedome.com.au/re4son/download/kali-linux-armel-re4son/) Kali image. I'm fairly certain it's very close to the stock image however this has the Nexmon drivers installed out of the box. 
 
 1. Flash the SD Card with Etcher (because it's pretty.)
 2. Edit `/etc/network/interfaces`
@@ -51,20 +111,19 @@ gateway 192.168.137.1
 5. microSD card -> RPi
 6. Plug the micro USB cable in the micro USB port on the left, not the power port.
 7. Wait for it to boot up
-8. If it doesn't autmatically connect, check the new NIC name. Mine is either 
+8. If it doesn't automatically connect, check the new NIC name. Mine is either 
 `enp0s20f0u1` or `enp0s20f0u1i1`. This is $INTERFACE.
 9. `sudo ip addr add 192.168.137.1/24 broadcast 192.168.137.255 dev $INTERFACE`
 10. `sudo ip route add 192.168.137.0/24 via 192.168.137.1 dev $INTERFACE`
 11. Try to SSH in, `ssh root@192.168.137.2`
 12. If that doesn't work, use your network manager to disconnect from the network, run the two commands above, and try again. 
 
-
 # January 29th, 2018
 ## Kali on RPi Zero W (Headless)
 
 UPDATE: So you need a few NICs (two or more) to actually use the attack scripts so don't use a RPi. But this did give me an idea so I'll write that up today.
 
-Since the [KRACK scripts](https://github.com/vanhoefm/krackattacks-scripts) went public I've been meaning to play with them. I have a surplus of RPi Zero W's so I figured I'd throw Kali on one but I guess setting one up without a screen is extremely finnicky. I've thrown two hours at it so far following [this guide](https://whitedome.com.au/re4son/re4son-kernel/) (Search for "Ethernet Gadget") to find the exact instructions. Both Arch and macOS saw the ethernet gadget however I was unable to SSH in over USB. I also loosly follewed [these instructions](https://bbs.archlinux.org/viewtopic.php?id=216968) for assigning an ip address to the RPi over USB on Arch but still no luck. I'll try on Windows later tonight? [P4wnPi](https://github.com/mame82/P4wnP1) setup including SSH over USB was also a failure on Arch. I'm assuming it's an Arch issue then... P4wnPi, depending on the config, opens a WiFi network for management purposes so that was handy to initially set it up. 
+Since the [KRACK scripts](https://github.com/vanhoefm/krackattacks-scripts) went public I've been meaning to play with them. I have a surplus of RPi Zero W's so I figured I'd throw Kali on one but I guess setting one up without a screen is extremely finicky. I've thrown two hours at it so far following [this guide](https://whitedome.com.au/re4son/re4son-kernel/) (Search for "Ethernet Gadget") to find the exact instructions. Both Arch and macOS saw the ethernet gadget however I was unable to SSH in over USB. I also loosely followed [these instructions](https://bbs.archlinux.org/viewtopic.php?id=216968) for assigning an ip address to the RPi over USB on Arch but still no luck. I'll try on Windows later tonight? [P4wnPi](https://github.com/mame82/P4wnP1) setup including SSH over USB was also a failure on Arch. I'm assuming it's an Arch issue then... P4wnPi, depending on the config, opens a WiFi network for management purposes so that was handy to initially set it up. 
 
 Alright finally!
 
@@ -101,11 +160,11 @@ I ran [AFL](http://lcamtuf.coredump.cx/afl/) against VLC's WAV decoder over brea
 ## Almost noon delight
 Morning everyone, what have I been up to you ask? Good question. School mostly. I did manage to get object recognition and classification working with [OpenCV and Tensorflow](https://twitter.com/Blurbdust/status/900207128283144192) so that's cool.
 
-I stopped trying to hack in support for the PlutoSDR into gr-osmosdr beause [csete](http://oz9aec.net/) already [did](https://github.com/csete/gr-osmosdr-gqrx/tree/plutosdr). I saw [this](https://wiki.analog.com/university/tools/pluto/users/customizing) wiki page when I first got the SDR but I thought it only pertained to preproduction hardware so I didn't try it and chance that I would brick the device. Someone else did try and it worked so I tried it and I can confirm it works as well! Now I get 70MHz - 6GHz with 56MHz of bandwidth! That's insane for being $99!
+I stopped trying to hack in support for the PlutoSDR into gr-osmosdr because [csete](http://oz9aec.net/) already [did](https://github.com/csete/gr-osmosdr-gqrx/tree/plutosdr). I saw [this](https://wiki.analog.com/university/tools/pluto/users/customizing) wiki page when I first got the SDR but I thought it only pertained to preproduction hardware so I didn't try it and chance that I would brick the device. Someone else did try and it worked so I tried it and I can confirm it works as well! Now I get 70MHz - 6GHz with 56MHz of bandwidth! That's insane for being $99!
 
-Along the lines of updates, I am now running Arch on my laptop and I'm loving it so far. Everything is snappy and super lightweight compared to Windows. I was trying to get away with using a VM and the Linux subsystem but I contasntly wanted Linux running natively so I switched. I also got a license for Binary Ninja and installed the majority of the tools listed [here](https://github.com/zardus/ctf-tools.git) for the various CTFs I participate in.
+Along the lines of updates, I am now running Arch on my laptop and I'm loving it so far. Everything is snappy and super lightweight compared to Windows. I was trying to get away with using a VM and the Linux subsystem but I constantly wanted Linux running natively so I switched. I also got a license for Binary Ninja and installed the majority of the tools listed [here](https://github.com/zardus/ctf-tools.git) for the various CTFs I participate in.
 
-Transistioning to cybersecurity now, a class that I am in requires a research project and a demonstration. My project is arbitary code execution on iOS. I know that is a very distant goal currently. My backup plan, which was already approved, is explaining how an already known vulnerability works as well as writing my own exploit for it. That is a lot less difficult than finding my own bugs and writing and exploit for them. I am very aware how difficult this project will be and I'm charging full steam ahead. I'm already on Chapter 5 of the iOS Hacker's Handbook so things are starting to make sense as to how iOS works (as of iOS 5.1.1). I know there are a ton of new things that I need to learn before getting to modern day iOS such as 64-bit ARM assembly, KPP, and surely a huge list I can't think of before drinking coffee. (Coffee is done now).
+Transitioning to cybersecurity now, a class that I am in requires a research project and a demonstration. My project is arbitrary code execution on iOS. I know that is a very distant goal currently. My backup plan, which was already approved, is explaining how an already known vulnerability works as well as writing my own exploit for it. That is a lot less difficult than finding my own bugs and writing and exploit for them. I am very aware how difficult this project will be and I'm charging full steam ahead. I'm already on Chapter 5 of the iOS Hacker's Handbook so things are starting to make sense as to how iOS works (as of iOS 5.1.1). I know there are a ton of new things that I need to learn before getting to modern day iOS such as 64-bit ARM assembly, KPP, and surely a huge list I can't think of before drinking coffee. (Coffee is done now).
 
 
 # August 15th, 2017
