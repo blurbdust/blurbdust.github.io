@@ -84,6 +84,8 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
 }
 ```
 
+So it's something about unreserving pages. I struggled with paging in CPRE 381 so I handed it over to the maintainer. That very brief report can be found [here](https://bugzilla.kernel.org/show_bug.cgi?id=199037). 
+
 # February 1st, 2018
 ## Full Kali on RPi Zero W
 
