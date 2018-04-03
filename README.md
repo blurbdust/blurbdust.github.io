@@ -36,6 +36,8 @@
 # April 3rd, 2018
 ## CVE-2018-7740
 
+This is a work in progress and I will continue to make this less confusing and further understand the bug. 
+
 This is the beginning of the story of CVE-2018-7740 or how I completed a life goal. 
 
 First and foremost, PoC.
