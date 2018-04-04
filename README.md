@@ -34,7 +34,7 @@
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
 
 # April 3rd, 2018
-## CVE-2018-7740
+## CVE-2018-7740 Part 1
 
 This is a work in progress and I will continue to make this less confusing and further understand the bug. 
 
