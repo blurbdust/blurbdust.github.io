@@ -36,7 +36,7 @@
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
 
 # April 25th, 2018
-## Attify Badge GUI on Linux
+## Attify Badge GUI on Arch
 
 I have to wake up in seven hours so ~~no sed scripts tonight~~ but here's how I got the Attify Badge GUI running on Arch. This culmination of commands is untested. Just comment and I'll help out.
 
