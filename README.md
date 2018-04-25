@@ -7,6 +7,8 @@
 * ~~OpenVPN setup on VPS (Maybe not. It's a lot of work.)~~
 * AWS Certification (All three levels)
 
+[April 25th, 2018](https://github.com/blurbdust/blurbdust.github.io#april-25th-2018)
+
 [April 3rd, 2018](https://github.com/blurbdust/blurbdust.github.io#april-3rd-2018)
 
 [February 1st, 2018](https://github.com/blurbdust/blurbdust.github.io#february-1st-2018)
@@ -32,6 +34,40 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# April 25th, 2018
+## Attify Badge GUI on Linux
+
+I have to wake up in seven hours so ~~no sed scripts tonight~~ but here's how I got the Attify Badge GUI running on Arch. This culmination of commands is untested. Just comment and I'll help out.
+
+```
+git clone https://github.com/attify/attify-badge.git
+cd attify-badge
+sudo pacman -S base-devel
+wget https://www.intra2net.com/en/developer/libftdi/download/libftdi1-1.2.tar.bz2
+tar -xf libftdi1-1.2.tar.bz2
+mv src/modcmakefile libftdi1-1.2/python/CMakeLists.txt
+cd libftdi1-1.2
+mkdir build
+cd build
+echo
+echo "[*] Installing Libraries "
+cmake -DPYTHON_EXECUTABLE:FILEPATH=/usr/bin/python -DCMAKE_INSTALL_PREFIX="/usr/" ../
+make
+sudo make install
+
+git clone https://github.com/devttys0/libmpsse
+cp src/mpsse.h libmpsse/src/
+cd libmpsse/src
+sed -i 's/\$\(python/$(python2/g' configure
+./configure
+make
+sudo make install
+
+git clone https://www.github.com/adafruit/Adafruit_Python_GPIO
+cd Adafruit_Python_GPIO/
+sudo python2 setup.py install
+```
 
 # April 3rd, 2018
 ## CVE-2018-7740 Part 1
