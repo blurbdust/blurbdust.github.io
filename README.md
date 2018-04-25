@@ -43,19 +43,22 @@ I have to wake up in seven hours so ~~no sed scripts tonight~~ but here's how I 
 ```
 git clone https://github.com/attify/attify-badge.git
 cd attify-badge
-sudo pacman -S base-devel
+sudo pacman -S base-devel python2-pyqt4
+git clone https://aur.archlinux.org/openocd.git
+cd openocd
+makepkg -s
+sudo pacman -U *.xz
+cd ..
 wget https://www.intra2net.com/en/developer/libftdi/download/libftdi1-1.2.tar.bz2
 tar -xf libftdi1-1.2.tar.bz2
 mv src/modcmakefile libftdi1-1.2/python/CMakeLists.txt
 cd libftdi1-1.2
 mkdir build
 cd build
-echo
-echo "[*] Installing Libraries "
 cmake -DPYTHON_EXECUTABLE:FILEPATH=/usr/bin/python -DCMAKE_INSTALL_PREFIX="/usr/" ../
 make
 sudo make install
-
+cd ..
 git clone https://github.com/devttys0/libmpsse
 cp src/mpsse.h libmpsse/src/
 cd libmpsse/src
