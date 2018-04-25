@@ -70,6 +70,8 @@ sudo make install
 git clone https://www.github.com/adafruit/Adafruit_Python_GPIO
 cd Adafruit_Python_GPIO/
 sudo python2 setup.py install
+cd ..
+python2 main.py
 ```
 
 # April 3rd, 2018
