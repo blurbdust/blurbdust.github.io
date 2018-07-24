@@ -120,7 +120,7 @@ trafficmanager.net. 30 IN SOA tm1.msft.net. hostmaster.trafficmanager.net. 20030
 18. Click `OK`
 ![OK](https://blurbdust.github.io/images/ok.png)
 19. Sort by Cheapest
-After all, we only want this a PoC.
+After all, we only want this as a PoC.
 ![Cheapest](https://blurbdust.github.io/images/sorted.cheapest.png)
 20. Set Availability
 Mine is named None
