@@ -124,13 +124,13 @@ After all, we only want this as a PoC.
 ![Cheapest](https://blurbdust.github.io/images/sorted.cheapest.png)
 20. Set Availability
 Mine is named None
-![availability](https://blurbdust.github.io/images/none.availablity.png)
+![availability](https://blurbdust.github.io/images/none.availability.png)
 21. Set IP Address of VM
-![IP](https://blurbdust.github.io/images/ip.png)
+![IP](https://blurbdust.github.io/images/IP.png)
 22. Allow HTTP, HTTPS, and SSH
 ![Allow](https://blurbdust.github.io/images/allow.http.https.ssh.png)
 23. Create VM
-![VM Done](https://blurbdust.github.io/imagescreate.vm.png)
+![VM Done](https://blurbdust.github.io/images/create.vm.png)
 
 Now you can SSH in and setup a webserver to serve your subdomain takeover PoC! Something as simple as `python -m SimpleHTTPServer 80` would work but I had so many requests it kept crashing and I had to install something better, like [nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04).
 
