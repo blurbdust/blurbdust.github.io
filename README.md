@@ -7,6 +7,8 @@
 * ~~OpenVPN setup on VPS (Maybe not. It's a lot of work.)~~
 * AWS Certification (All three levels)
 
+[July 23rd, 2018](https://github.com/blurbdust/blurbdust.github.io#july-23rd-2018)
+
 [April 25th, 2018](https://github.com/blurbdust/blurbdust.github.io#april-25th-2018)
 
 [April 3rd, 2018](https://github.com/blurbdust/blurbdust.github.io#april-3rd-2018)
@@ -34,6 +36,105 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# July 23rd, 2018
+## Subdomain Takeover with Starbucks
+### Or how to make $4K in three hours
+
+[The HackerOne report](https://hackerone.com/reports/383564)
+
+Let's start with the timeline. I watched [this video](https://www.youtube.com/watch?v=Qw1nNPiH_Go) on Thursday the 12th and again on Friday the 13th. Friday through Sunday were spent trying to copy-paste a XSS polyglot into various websites with no luck. Then I heard about subdomain takeovers on Wednesday the 18th and read [this HackerOne report](https://hackerone.com/reports/325336) and the subsequent [blog post](https://0xpatrik.com/subdomain-takeover-starbucks/) several times to the point where I understood exactly what was happening. Starbucks had left a DNS record to point to an unregistered Azure instance. Since no one controlled the Azure instance anymore, people are free to register it. So if you match the name listed in the CNAME of a Starbucks controlled DNS record, it then points to you. Now anyone can browse to the subdomain and all traffic goes to you.
+
+Pretty simple, right? Actually yeah. Now you just need a way to find all the possible endpoints that are potentially vulnerable. A couple easy ways are from the [previously mentioned video](https://www.youtube.com/watch?v=Qw1nNPiH_Go) which are [amass](https://github.com/caffix/amass) and [subfinder](https://github.com/subfinder/subfinder). By running those, concatenating them, sorting, and removing duplicates, you have a really good list to check. After running [massdns](https://github.com/blechschmidt/massdns), you can check for any `NXDOMAIN`s that point to endpoints listed in [can-i-take-over-xyz](https://github.com/EdOverflow/can-i-take-over-xyz) such as `*.trafficmanager.net`. This is because `*.trafficmanager.net` is controlled "easily" from the Azure portal. I actually spent a solid hour trying to get things running at first so below will be a guide full of screenshots.
+
+The DNS packets for reference,
+#### svcgatewayloadus.starbucks.com
+```
+;; Server: 1.1.1.1:53
+;; Size: 191
+;; Unix time: 1531965036
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 3697
+;; flags: qr rd ra ; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+svcgatewayloadus.starbucks.com. IN A
+
+;; ANSWER SECTION:
+svcgatewayloadus.starbucks.com. 600 IN CNAME s00197tmp0crdfulload0.trafficmanager.net.
+
+;; AUTHORITY SECTION:
+trafficmanager.net. 30 IN SOA tm1.msft.net. hostmaster.trafficmanager.net. 2003080800 900 300 2419200 30
+```
+#### svcgatewaydevus.starbucks.com
+```
+;; Server: 9.9.9.9:53
+;; Size: 156
+;; Unix time: 1531965036
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 47788
+;; flags: qr rd ra ; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+svcgatewaydevus.starbucks.com. IN A            
+
+;; ANSWER SECTION:
+svcgatewaydevus.starbucks.com. 600 IN CNAME s00197tmp0crdfuldev0.trafficmanager.net.            
+
+;; AUTHORITY SECTION:
+trafficmanager.net. 30 IN SOA tm1.msft.net. hostmaster.trafficmanager.net. 2003080800 900 300 2419200 30
+```
+
+1. Make a Microsoft Account
+2. Sign in and setup the account on [https://portal.azure.com](https://portal.azure.com)
+3. Go to the Dashboard
+![Dashboard](https://blurbdust.github.io/images/azure.all.png)
+3. Search `IP Address`
+![IP](https://blurbdust.github.io/images/ip.search.png)
+4. Add IP Address
+![Add IP](https://blurbdust.github.io/images/add.ip.png)
+5. Choose `Static` IP
+![Static](https://blurbdust.github.io/images/static.ip.png)
+6. Search for `traffic`
+![Traffic](https://blurbdust.github.io/images/traffic.png)
+7. Click `Add`
+![Add](https://blurbdust.github.io/images/add.png)
+8. Configure the Traffic Profile. RANDOMNAMEHERE in my case was `s00197tmp0crdfulload0` and `s00197tmp0crdfuldev0`
+![Configure Traffic Profile](https://blurbdust.github.io/images/traffic.dash.png)
+9. Click Endpoints
+![Endpoints](https://blurbdust.github.io/images/click.endpoints.png)
+10. Add Endpoint
+![Add Endpoint](https://blurbdust.github.io/images/add.endpoints.png)
+11. Choose the Public IP 
+![Dashboard](https://blurbdust.github.io/images/public.ip.png)
+12. Go Back to Dashboard, Search `VM`
+![VM](https://blurbdust.github.io/images/vm.png)
+13. Add a VM
+![Add VM](https://blurbdust.github.io/images/vm.add.png)
+14. Choose an OS (Ubuntu has great [forums](https://ubuntuforums.org/) for beginners)
+![OS](https://blurbdust.github.io/images/ubuntu.png)
+15. Choose Version of OS
+![16.04](https://blurbdust.github.io/images/16.04.png)
+16. Click Create
+![Create](https://blurbdust.github.io/images/create.png)
+17. Configure the VM
+![Fill Out](https://blurbdust.github.io/images/fill.out.png)
+18. Click `OK`
+![OK](https://blurbdust.github.io/images/ok.png)
+19. Sort by Cheapest
+After all, we only want this a PoC.
+![Cheapest](https://blurbdust.github.io/images/sorted.cheapest.png)
+20. Set Availability
+Mine is named None
+![availability](https://blurbdust.github.io/images/none.availablity.png)
+21. Set IP Address of VM
+![IP](https://blurbdust.github.io/images/ip.png)
+22. Allow HTTP, HTTPS, and SSH
+![Allow](https://blurbdust.github.io/images/allow.http.https.ssh.png)
+23. Create VM
+![VM Done](https://blurbdust.github.io/imagescreate.vm.png)
+
+Now you can SSH in and setup a webserver to serve your subdomain takeover PoC! Something as simple as `python -m SimpleHTTPServer 80` would work but I had so many requests it kept crashing and I had to install something better, like [nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04).
+
+Happy Hunting!
 
 # April 25th, 2018
 ## Attify Badge GUI on Arch
