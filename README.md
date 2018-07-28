@@ -37,6 +37,31 @@
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
 
+# July 27th, 2018
+## eGPU on Arch Linux
+
+So recently I bought an [eGPU](https://www.amazon.com/Gigabyte-Aorus-Gaming-Graphic-GV-N1080IXEB-8GD/dp/B076PZ6PRK). I'm going to mainly use it for password cracking, whether that's at work or during a CTF like the CDC. I hopefully will use it for Machine Learning stuff since the last time I was doing stuff I ran into the issue of my GPU not having enough VRAM but since the 1080 I bought has 8GB of VRAM I *should* be good.
+
+So the guide I followed for most of this is [here](http://pocketnix.org/posts/eGPUs%20under%20Linux%3A%20an%20advanced%20guide). But I did divert quite a bit since I'm not using a custom kernel and it's 4 versions higher than the one in the guide (4.17.x vs 4.14.x).
+
+So for a hotpluggable (kinda) eGPU on Arch:
+```
+sudo pacman -S nvidia opencl-nvidia cuda bumblebee
+sudo systemctl enable bumblebleed
+sudo systemctl start bumblebleed
+sudo chown $USER /var/run/bumblebee.socket
+sudo gpasswd -a $USER bumblebee
+git clone https://aur.archlinux.org/tbt.git
+cd tbt
+makepkg -s
+sudo pacman -U *.xz
+```
+So now everytime you plug in the eGPU you need to reauthorize it and the cable itself (weird) with 
+`sudo tbtadm approve-all`
+
+I believe if you were to run Thunderbolt in secure mode (change the setting in the BIOS) then you could verify the key every time and if there was a valid key it would automatically be approved. I could not write to the key file on the thunderbolt bus (I think it's stored on the controller in my enclosure?) so I have not been able to get that working. I will stick with running `sudo tbtadm approve-all` everytime I plug in the eGPU though.
+
+
 # July 23rd, 2018
 ## Subdomain Takeover with Starbucks
 ### Or how to make $4K in three hours
