@@ -7,6 +7,8 @@
 * ~~OpenVPN setup on VPS (Maybe not. It's a lot of work.)~~
 * AWS Certification (All three levels)
 
+[July 27th, 2018](https://github.com/blurbdust/blurbdust.github.io#july-27th-2018)
+
 [July 23rd, 2018](https://github.com/blurbdust/blurbdust.github.io#july-23rd-2018)
 
 [April 25th, 2018](https://github.com/blurbdust/blurbdust.github.io#april-25th-2018)
