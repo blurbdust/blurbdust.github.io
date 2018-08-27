@@ -44,14 +44,26 @@
 # August 27th, 2018
 ## Thoughts on Password Cracking Challenge
 
+See [here](https://www.netmux.com/blog/hash-crack-challenge)
+
 The math for the below at using two of the Basic technique you have 
 len(average_word) + len(?a) + len(?a) # ?a = 26 + 26 + 10 + 22
 26 for lowercase
+
 26 for uppercase
+
 10 for digits
-22 for gievn specials charset ("-!@#$%^&*=?[](),.;{}:+")
+
+22 for given specials charset ("-!@#$%^&*=?[](),.;{}:+")
+
 = 84^x ways where x = 14 since 7x7 grid * 2 
-So in bytes, each line is on average 5 + 14 + 1 (newline) = 20 bytes * 84^14 = 20 * 870783126313900412592193536 = 17415662526278008251843870720 or ~17415663 ZB. 
+
+So in bytes, each line is on average 5 + 14 + 1 (newline) = 20 bytes * 84^14
+
+= 20 * 870783126313900412592193536
+
+= 17415662526278008251843870720 or ~17415663 ZB. 
+
 If you generate on the fly you'll only have 84^14 ways so with a 1080 doing SHA1 hashing it'd only take 3.234 * 10^9 years. And remember, that's only the basic method with two directions used.
 ```
 Breaking Basic Random Grid:
