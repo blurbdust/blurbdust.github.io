@@ -41,6 +41,26 @@
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
 
+# September 1st, 2018
+## Follow up to Password Cracking Challenge
+
+I got a few things wrong and a few things right when it came to this challenge. I was wrong about the 54 long charset, it was 34. 
+
+A friend noticed with the scatter method, nothing is reused. Each chosen cell has to be unique so that changed from combinations (n^x) to permutations (n!) and in this case it lowered the possibilities tremendously. I was unable to find a tool that could make permutations and utilize a GPU for computation. Unless I'm blind and need to RTFM, I couldn't use hashcat for the computation of the possibilities unless I wanted to unnecessarily compute combinations instead of permutations. 
+
+Now that I'm thinking about it, I could have made a huge mask file and do custom character sets while removing one character from each charset but hashcat is limited to four custom charsets so I wouldn't be able to do the whole 14 characters we needed to compute.
+
+The way we did it, (read Steve did it) is using `itertools.permutation(charset, 14)`. I learned permutations returns a tuple of the choices and trying to make a list of the results to parse easier was using an absurd amount of RAM so the script I went with was something like
+
+```
+for ele in itertools.permutations(['+', '+', '+', '+', '.', '.', '.', '3', '3', '8', '8', 'o', 'o', 'L', 'L', 'G', 'G', 'I', 'I', '$', '$', 'p', 'p', '0', '9', ')', 'M', 'V', 'w', 'y', 'c', 'A', '!', 'q', 'W', 'K', 'H', 'e', 'P', '?', '*', '{', 'T', 'x', 'J', 'z', 'h', 'b', 'u'], 14):
+        to_hash.append(''.join(ele) + "71997")
+```
+
+I tried piping the strings into hashcat and John but it was nowhere near the speed of hashcat making the strings itself. In the time it took to generate and check "++++...338????" hashcat checked all combinations (much larger) of "++++...???????". I let the script run for 6 hours and it never made it out of the "++++..." area. 
+
+I hope to have a more in depth write up once I'm back from out of town.
+
 # August 27th, 2018
 ## Thoughts on Password Cracking Challenge
 
