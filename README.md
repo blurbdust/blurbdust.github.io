@@ -80,7 +80,7 @@ https://twitter.com/SecDSM/status/1161778359870926848
 
 which was https://minictf.secdsm.org/yaaaaaaaaaaaaaaaa/
 
-From here we playe daround with values. We noticed `int(y1) - int(y2)` was the same value across all four of us. This ended up being a red herring but worth noting. 
+From here we played around with values. We noticed `int(y1) - int(y2)` was the same value across all four of us. This ended up being a red herring but worth noting. 
 
 SecDSM then tweeted out a hint of: `The puzzle master is sometimes known as Shamir.`
 
