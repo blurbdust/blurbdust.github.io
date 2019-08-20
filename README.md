@@ -7,6 +7,8 @@
 * ~~OpenVPN setup on VPS (Maybe not. It's a lot of work.)~~
 * AWS Certification (All three levels)
 
+[August 20th, 2019](https://github.com/blurbdust/blurbdust.github.io#august-20th-2019)
+
 [August 27th, 2018](https://github.com/blurbdust/blurbdust.github.io#august-27th-2018)
 
 [July 27th, 2018](https://github.com/blurbdust/blurbdust.github.io#july-27th-2018)
@@ -40,6 +42,145 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# August 20th, 2019
+## SecDSM August Mini-CTF
+
+### Background
+On Twitter, SecDSM tweeted out a barcode. The barcode is for a textbook for Polynomials.
+https://twitter.com/SecDSM/status/1161762076597149696
+
+### Challenge
+In person, once there was a team of four people in front of the CTF master, he gave out four slips of papers. On the papers, it noted `k = 4` and `p` will be gievn out at the start of the CTF.
+We got:
+```
+x=0x39
+y1=75F1B8D7
+y2=7435A7DB
+```
+```
+x=0x3A
+y1=481297DC
+y2=465686E0
+```
+```
+x=0x3B
+y1=1DCA61B3
+y2=1C0E50B7
+```
+```
+x=3C
+y1=8C2BC7FB
+Y2=8A6FB6FF
+```
+
+SecDSM also tweeted out the link to the CTF start page
+https://twitter.com/SecDSM/status/1161778359870926848
+which was https://minictf.secdsm.org/yaaaaaaaaaaaaaaaa/
+
+From here we playe daround with values. We noticed `int(y1) - int(y2)` was the same value across all four of us. This ended up being a red herring but worth noting. 
+
+SecDSM then tweeted out a hint of: `The puzzle master is sometimes known as Shamir.`
+https://twitter.com/SecDSM/status/1161784439216754688
+
+Immedietly my thoughts went to RSA where the S stands for `Shamir`. We were not given a clearly defined public key or private key so I figured this was not RSA. I remembered from the Boston Key Party 2017, there was a RSA+Shamir's Secret sharing challenge. (See other people's writeups [here](https://github.com/ctfs/write-ups-2017/tree/master/boston-key-party-2017/crypto/rsa-buffet-150).)
+
+After looking at the format of the data from the old challenge and we noted there was similarities between them. We were pretty sure we were going down the correct path here. We started looking at small implementations of Shamir's secret sharing. We found [an article](https://medium.com/@apogiatzis/shamirs-secret-sharing-a-numeric-example-walkthrough-a59b288c34c4) on Medium and started reading through it. We noticed we needed `k` number of "ciphertexts" in order to recover the secret. The fact that the paper said `k = 4` and we had four pieces of paper cemented the idea we were on the right track so everyone moved their efforts to this. We found out from the article we need to reconstruct the original equation, or polynomial, that created the "ciphertexts". The ending constant (x^0) in the original polynomial is the secret. The article also mentioned `Lagrange Polynomial Interpolation` which is the technique needed to reconstruct the original polynomial and thus the secret.
+
+We started typing out the steps to solve the polynomial but this is competition so someone on our team was Googling for it too and they found https://www.dcode.fr/lagrange-interpolating-polynomial. Great! We format the given numbers in the desired format of `(int(x), int(y1))` for each of the `y1` and `y2`.
+
+We then got back the two curves that were used to generate the team's points.
+
+```
+# y1
+a = ((2501030303*x^3) / 6) - (72499767706*x^2) + ((25212502555537*x) / 6) - 81160601042287
+
+# y2
+b = ((2501030303*x^3) / 6) - (72499767706*x^2) + ((25212502555537*x) / 6) - 81160630144619
+```
+
+The mistep we took was taking the entire polynomial substituting in our x values and trying to use that ending number as the key. It in fact did not work. From here we got stuck. I went back to the Medium article and they said the last constant is the secret. So I took this and tried to use that as the key. IT also did not work. Eventually it was announced the key was `hex(secret1)` concatentated with `hex(secret2)` then decoding those hex values as ascii and the characters given back are the key. I tried this with the same constant from the end and I got back unprintable characters. I also tried mod'ing `81160601042287` by `p` and trying this but also had no luck. This is when another team finished the challenge. Did you notice my mistake? I dropped the `-` symbol. Taking the `-81160601042287 mod p = 1898990178`. Then using this value and do the dance of `hex(1898990178) + hex((-81160630144619 % 2500000001))` we get `0x71304a62 + 0x6f743966` and then by removing the `0x` we get `71304a626f743966`. Decoding this from hex to ascii we get `q0Jbot9f`. 
+
+### Solution
+By using the URL given from https://minictf.secdsm.org/yaaaaaaaaaaaaaaaa/ of https://minictf.secdsm.org/XXXXXXXX/solve.html and replacing the X's with the `q0Jbot9f` we get https://minictf.secdsm.org/q0Jbot9f/solve.html and 
+```
+Welcome to the Augh 2019 SecDSM MiniCTF Challenge Presented by Sirius!
+
+CONGRATS - You've solved the puzzle, but you're not done yet!
+
+Find the miniCTF sponsor - provide them this phrase, exactly this phrase, nothing more nothing less. You MUST memorize it, if you read it off, or get it wrong, you'll be provided a red herring instead. The Phrase is: "Martin Bishop thinks Whistler is a great driver"
+
+
+
+
+Thanks to Siruis for providing the prizes and sponsoring SecDSM! 
+```
+
+### Code
+```python
+#!/usr/bin/env python3
+import requests
+import json
+import re
+
+points_y1 = [	[int(0x39), int(0x75F1B8D7)],
+				[int(0x3A), int(0x481297DC)],
+				[int(0x3B), int(0x1DCA61B3)],
+				[int(0x3C), int(0x8C2BC7FB)]
+			]
+
+points_y2 = [	[int(0x39), int(0x7435A7DB)],
+				[int(0x3A), int(0x465686E0)],
+				[int(0x3B), int(0x1C0E50B7)],
+				[int(0x3C), int(0x8A6FB6FF)]
+			]
+
+p = 2500000001
+
+def format_points(points):
+	out = ""
+	for i in range(0, len(points)):
+		out += "(" + str(points[i][0]) + "," + str(points[i][1]) + ")"
+		#out += "(" + str(points[i][0]) + "%2C" + str(points[i][1]) + ")"
+		if (i != (len(points) - 1)):
+			out += " "
+	return out
+
+def solve_equation_get_secret(points):
+	# https://www.dcode.fr/api/
+	# tool=lagrange-interpolating-polynomial&points=(0%2C1)+(2%2C5)+(4%2C17)
+	r = requests.post("https://www.dcode.fr/api/", data={"tool":"lagrange-interpolating-polynomial", "points":points})
+	resp = r.json()["results"]
+	resp = resp.replace("$$", "")
+	
+	#print(resp)
+	
+	equation = re.split("[+-]", resp)
+	
+	# just finds if the number is negative or not. 
+	is_neg = None
+	if (resp.find("-", len(resp) - len(equation[-1]) - 2, len(resp)) == -1):
+		is_neg = False
+	else:
+		is_neg = True
+	
+	secret = str(equation[-1]).replace(" ", "")
+	
+	if (is_neg):
+		secret = -1 * int(secret)
+	
+	return secret
+
+secret1 = solve_equation_get_secret(format_points(points_y1)) % p
+secret2 = solve_equation_get_secret(format_points(points_y2)) % p
+
+to_decode = ""
+to_decode += hex(secret1).replace("0x", "") # remove 0x
+to_decode += hex(secret2).replace("0x", "") # remove 0x
+
+print(bytes.fromhex(to_decode).decode('utf-8'))
+```
+
 
 # September 1st, 2018
 ## Follow up to Password Cracking Challenge
