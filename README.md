@@ -48,6 +48,7 @@
 
 ### Background
 On Twitter, SecDSM tweeted out a barcode. The barcode is for a textbook for Polynomials.
+
 https://twitter.com/SecDSM/status/1161762076597149696
 
 ### Challenge
@@ -76,11 +77,13 @@ Y2=8A6FB6FF
 
 SecDSM also tweeted out the link to the CTF start page
 https://twitter.com/SecDSM/status/1161778359870926848
+
 which was https://minictf.secdsm.org/yaaaaaaaaaaaaaaaa/
 
 From here we playe daround with values. We noticed `int(y1) - int(y2)` was the same value across all four of us. This ended up being a red herring but worth noting. 
 
 SecDSM then tweeted out a hint of: `The puzzle master is sometimes known as Shamir.`
+
 https://twitter.com/SecDSM/status/1161784439216754688
 
 Immedietly my thoughts went to RSA where the S stands for `Shamir`. We were not given a clearly defined public key or private key so I figured this was not RSA. I remembered from the Boston Key Party 2017, there was a RSA+Shamir's Secret sharing challenge. (See other people's writeups [here](https://github.com/ctfs/write-ups-2017/tree/master/boston-key-party-2017/crypto/rsa-buffet-150).)
