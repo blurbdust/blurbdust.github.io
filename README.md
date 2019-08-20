@@ -52,7 +52,7 @@ On Twitter, SecDSM tweeted out a barcode. The barcode is for a textbook for Poly
 https://twitter.com/SecDSM/status/1161762076597149696
 
 ### Challenge
-In person, once there was a team of four people in front of the CTF master, he gave out four slips of papers. On the papers, it noted `k = 4` and `p` will be gievn out at the start of the CTF.
+In person, once there was a team of four people in front of the CTF master, he gave out four slips of papers. On the papers, it noted `k = 4` and `p` will be given out at the start of the CTF.
 We got:
 ```
 x=0x39
@@ -86,7 +86,7 @@ SecDSM then tweeted out a hint of: `The puzzle master is sometimes known as Sham
 
 https://twitter.com/SecDSM/status/1161784439216754688
 
-Immedietly my thoughts went to RSA where the S stands for `Shamir`. We were not given a clearly defined public key or private key so I figured this was not RSA. I remembered from the Boston Key Party 2017, there was a RSA+Shamir's Secret sharing challenge. (See other people's writeups [here](https://github.com/ctfs/write-ups-2017/tree/master/boston-key-party-2017/crypto/rsa-buffet-150).)
+Immediately my thoughts went to RSA where the S stands for `Shamir`. We were not given a clearly defined public key or private key so I figured this was not RSA. I remembered from the Boston Key Party 2017, there was a RSA+Shamir's Secret sharing challenge. (See other people's writeups [here](https://github.com/ctfs/write-ups-2017/tree/master/boston-key-party-2017/crypto/rsa-buffet-150).)
 
 After looking at the format of the data from the old challenge and we noted there was similarities between them. We were pretty sure we were going down the correct path here. We started looking at small implementations of Shamir's secret sharing. We found [an article](https://medium.com/@apogiatzis/shamirs-secret-sharing-a-numeric-example-walkthrough-a59b288c34c4) on Medium and started reading through it. We noticed we needed `k` number of "ciphertexts" in order to recover the secret. The fact that the paper said `k = 4` and we had four pieces of paper cemented the idea we were on the right track so everyone moved their efforts to this. We found out from the article we need to reconstruct the original equation, or polynomial, that created the "ciphertexts". The ending constant (x^0) in the original polynomial is the secret. The article also mentioned `Lagrange Polynomial Interpolation` which is the technique needed to reconstruct the original polynomial and thus the secret.
 
@@ -102,7 +102,7 @@ a = ((2501030303*x^3) / 6) - (72499767706*x^2) + ((25212502555537*x) / 6) - 8116
 b = ((2501030303*x^3) / 6) - (72499767706*x^2) + ((25212502555537*x) / 6) - 81160630144619
 ```
 
-The mistep we took was taking the entire polynomial substituting in our x values and trying to use that ending number as the key. It in fact did not work. From here we got stuck. I went back to the Medium article and they said the last constant is the secret. So I took this and tried to use that as the key. IT also did not work. Eventually it was announced the key was `hex(secret1)` concatentated with `hex(secret2)` then decoding those hex values as ascii and the characters given back are the key. I tried this with the same constant from the end and I got back unprintable characters. I also tried mod'ing `81160601042287` by `p` and trying this but also had no luck. This is when another team finished the challenge. Did you notice my mistake? I dropped the `-` symbol. Taking the `-81160601042287 mod p = 1898990178`. Then using this value and do the dance of `hex(1898990178) + hex((-81160630144619 % 2500000001))` we get `0x71304a62 + 0x6f743966` and then by removing the `0x` we get `71304a626f743966`. Decoding this from hex to ascii we get `q0Jbot9f`. 
+The misstep we took was taking the entire polynomial substituting in our x values and trying to use that ending number as the key. It in fact did not work. From here we got stuck. I went back to the Medium article and they said the last constant is the secret. So I took this and tried to use that as the key. IT also did not work. Eventually it was announced the key was `hex(secret1)` concatenated with `hex(secret2)` then decoding those hex values as ascii and the characters given back are the key. I tried this with the same constant from the end and I got back unprintable characters. I also tried mod'ing `81160601042287` by `p` and trying this but also had no luck. This is when another team finished the challenge. Did you notice my mistake? I dropped the `-` symbol. Taking the `-81160601042287 mod p = 1898990178`. Then using this value and do the dance of `hex(1898990178) + hex((-81160630144619 % 2500000001))` we get `0x71304a62 + 0x6f743966` and then by removing the `0x` we get `71304a626f743966`. Decoding this from hex to ascii we get `q0Jbot9f`. 
 
 ### Solution
 By using the URL given from https://minictf.secdsm.org/yaaaaaaaaaaaaaaaa/ of https://minictf.secdsm.org/XXXXXXXX/solve.html and replacing the X's with the `q0Jbot9f` we get https://minictf.secdsm.org/q0Jbot9f/solve.html and 
@@ -183,7 +183,6 @@ to_decode += hex(secret2).replace("0x", "") # remove 0x
 
 print(bytes.fromhex(to_decode).decode('utf-8'))
 ```
-
 
 # September 1st, 2018
 ## Follow up to Password Cracking Challenge
