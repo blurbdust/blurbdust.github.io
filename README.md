@@ -1,11 +1,6 @@
-# Todo List
-* Research [OpenBTS](http://openbts.org) for use with PlutoSDR
-* Research [OpenLTE](http://openlte.sourceforge.net/) for use with PlutoSDR
-* ~~OpenCV Image Recognition on top of Tensorflow~~
-* ~~Support PlutoSDR in gr-osmosdr (So gr-scan works out of the box)~~
-* ~~IPv6 tunnel in Chicago~~
-* ~~OpenVPN setup on VPS (Maybe not. It's a lot of work.)~~
-* AWS Certification (All three levels)
+# Table of Contents
+
+[May 19th, 2021](https://github.com/blurbdust/blurbdust.github.io#may-19th-2021)
 
 [August 20th, 2019](https://github.com/blurbdust/blurbdust.github.io#august-20th-2019)
 
@@ -42,6 +37,32 @@
 [August 5th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-5th-2017)
 
 [August 4th, 2017](https://github.com/blurbdust/blurbdust.github.io#august-4th-2017)
+
+# May 19th, 2021
+## WiFi Adventures in a townhouse
+This is likely going to be a brain dump so apologies for the very scattered approach. I recently moved into a townhouse with two levels and very well insulated walls. My office is where my networking equipment sits and it is on the opposite end of the house as the living room. As expected, WiFi signal was fairly weak downstairs and especially in the living room. Everywhere else was pretty good but not amazing. My baseline was `26.7` Mbps down and `12.5` Mbps up (I will use `Down/Up` notation going forward) with output power forced to High. The goal is to get somewhere near the speeds in our old living room which was around `300/300` and a stretch goal of a wirelss bridge to wire in my army of G3 Flex's. The main constraint is not to run any cables since the house looks nice and we want to keep the clean look. One thing to note is there are coax terminations in every room however I do not have access to the input into my unit and thus cannot install a filter to stop any MoCA leaking upstream to my ISP and therefore will not use MoCA. 
+
+### Starting equipment list
+* [UAP-AC-LR](https://store.ui.com/products/unifi-ac-lr)
+* [TPLink Powerline Adaptors TL-PA7020](https://www.amazon.com/TP-Link-Powerline-1000Mbps-TL-PA7020-KIT/dp/B01EE9APYS)
+
+### Test 1: Powerline
+Since I already owned powerline adaptors that I used two apartments ago, I figured I would start with them and get a second Access Point. I picked up a [U6-Lite](https://store.ui.com/collections/unifi-network-wireless/products/unifi-ap-6-lite), put it in the office, and move the UAP-AC-LR into the living room. Running a speedtest in the office with a WiFi 6 client got `504/243` which was not bad at all. Now using the same client in the living room while connected to the UAP-AC-LR, I was only getting `50.3/49.8`. This was was fairly expected due to the fact that powerline really prefers both ends on the same circuit. 
+
+### Test 2: Wireless Uplink
+All Ubiquiti access points since the second generation support wireless uplinks from other Ubiquiti APs. I then configured the UAP-AC-LR to use the U6-Lite as it's uplink and repeated speedtests. I used the same client as before in the same spot and got `83.3/91.9` which was better but still not at the goal number. I started on the stretch goal here as well and was able to get a network switch connected to the UAP-AC-LR's NIC to provide "wired" connections to a G3 Flex camera. I connected my laptop to the network switch, removed the UAP-AC-LR from the AP group that broadcasts my SSIDs, and ran some speedtests. I got virtually the same numbers which means the wireless uplink is the limiting factor. 
+
+### Test 3: Adding a BeaconHD to the mix
+My bedroom is directly above the living room and gets fair WiFi speeds from the U6-Lite so it was a great candidate to house another AP. Again, we do not want to run a cable anywhere within the house and we want everything to look nice so the BeaconHD looked perfect. I snagged one, put it in the bedroom, and disabled the LED. It adopted fairly magically and I added it to the AP group that can broadcast my SSIDs. I then configured the UAP-AC-LR to use the new BeaconHD as it's uplink. I then ensured my phone was connected to the BeaconHD and ran some speedtests. I was able to get `198/178` which again is not bad at all but still not hitting my goal. 
+
+### Test 4: Client -> UAP-AC-LR -> BeaconHD -> U6-Lite -> Internet
+I re-enabled the UAP-AC-LR's ability to broadcast SSIDs and then forced my phone to connect to the UAP-AC-LR. From here, I ran some speedtests and got `118/82.5` which was interesting. It makes sense there is a point of diminishing returns with adding additional APs or hops into the chain but I figured it would be more then two. Since I was getting pretty decent speeds with the UAP-AC-LR not accepting wireless clients, I went ahead and returned to that state basically nullifying Test 4. 
+
+### Test 5: Adding a second BeaconHD
+I was working off the assumption that the loss in speed was due to the UAP-AC-LR not supporting 4x4 MU-MIMO or 802.11ac Wave 2 or some combination of the two. I went ahead and got a second BeaconHD and installed it downstairs in the living room. I ensured my phone was connected to the downstairs BeaconHD and ran some speedtests. Sure enough, I was getting very similar speeds to Test 4 getting `121/109`. 
+
+### Is there a test 6?
+For now, no. At this point, I'm $357+ in on this project and getting very minimal improvements. The main goal was not hit however the stretch goal was hit. This means I do in fact have a very useable network at ~200Mbps, it's just not quite as fast as it was before the move. 
 
 # August 20th, 2019
 ## SecDSM August Mini-CTF
