@@ -62,7 +62,7 @@ I re-enabled the UAP-AC-LR's ability to broadcast SSIDs and then forced my phone
 I was working off the assumption that the loss in speed was due to the UAP-AC-LR not supporting 4x4 MU-MIMO or 802.11ac Wave 2 or some combination of the two. I went ahead and got a second BeaconHD and installed it downstairs in the living room. I ensured my phone was connected to the downstairs BeaconHD and ran some speedtests. Sure enough, I was getting very similar speeds to Test 4 getting `121/109`. 
 
 ### Is there a test 6?
-For now, no. At this point, I'm $357+ in on this project and getting very minimal improvements. The main goal was not hit however the stretch goal was hit. This means I do in fact have a very useable network at ~200Mbps, it's just not quite as fast as it was before the move. 
+For now, no. Unless I can get an actual wire ran through the vents or through a wall somehow, I do not expect to any improvements. At this point, I'm $357+ in on this project and getting very minimal improvements with new additions into the wireless hop chain. The main goal was not hit however the stretch goal was hit. This means I do in fact have a very useable network at \~200Mbps, it's just not quite as fast as it was before the move. 
 
 # August 20th, 2019
 ## SecDSM August Mini-CTF
